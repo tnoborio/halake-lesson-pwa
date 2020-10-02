@@ -1,1 +1,25 @@
-<html><body>hoge</body></html>
+<html>
+<head>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HaLaKe PWA">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <link rel="apple-touch-icon" href="images/logo/halake_120.png" sizes="120x120">
+  <link rel="apple-touch-icon" href="images/logo/halake_192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="images/logo/halake_256.png" sizes="256x256">
+  <title>HaLake App</title>
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').then(function() { console.log('Service Worker Registered') })
+    }
+  </script>
+</head>
+<body>
+  <img src="images/logo/halake_256.png" class="logo" />
+  <div>
+    <a href="next.html">next.html</a>
+  </div>
+</body>
+</html>
