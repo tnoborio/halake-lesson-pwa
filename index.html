@@ -30,12 +30,103 @@
 
   <button type="button" class="btn btn-outline-primary">Danger</button>
 
+
+  <button type="button" class="btn btn-outline-primary btn-signup">アカウントを作る</button>
+
+  <div>
+    From: <input id="from" class="form" type="text" value="44552"></input>
+    To: <input id="to" class="form" type="text" value="48238"></input>
+    <input id="message" class="form" type="text"></input>
+    <button type="button" class="btn btn-send">送信する</button>
+  </div>
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   <script>
+    let number = 1
+
     $(".btn").on('click', function() {
-      alert("クリックされました")
+      if (number == -1) {
+        number = 1
+      } else {
+        number = -1
+      }
     })
+
+    setTimeout(function() {
+      console.log(1)
+    }, 1000)
+    setInterval(function() {
+      console.log(2)
+    }, 1000)
+
+
+
+
+    // setInterval(function() {
+    //   if (number == -1) {
+    //     return
+    //   }
+    //   $(".logo").attr("src", "images/cat" + number + ".png")
+    //   number = number + 1
+    //   if (number > 4) {
+    //     number = 1
+    //   }
+    // }, 1000)
+
+    $(".btn-signup").on('click', function() {
+      const nickname = prompt("Nickname: ")
+
+      const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+
+      fetch("https://2200c25abf67.ngrok.io/api/users", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          nickname
+        })
+      })
+      .then((res) => res.json())
+      .then(data => {
+        console.log(data)
+      })
+    })
+
+    $(".btn-send").on('click', function() {
+      const from = $("#from").val()
+      const to = $("#to").val()
+      const body = $("#message").val()
+
+      console.log({from, to, body})
+
+      const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+
+      fetch("https://2200c25abf67.ngrok.io/api/messages", {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          from, to, body
+        })
+      })
+      .then((res) => res.json())
+      .then(data => {
+        console.log(data)
+      })
+    })
+
+    setTimeout(function() {
+      fetch("https://2200c25abf67.ngrok.io/api/messages/" + $("#from").val())
+      .then((res) => res.json())
+      .then(data => {
+        console.log(data)
+      })
+    }, 10000)
   </script>
 </body>
 </html>
