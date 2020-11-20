@@ -22,31 +22,68 @@
 <body>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-  
-    <button id="signup" type="button" class="btn btn-outline-primary">アカウントを作る</button>
+
+    <h2>アカウントを作る</h2>
+
     ID: <input id="id" type="text" class="form">
+    Nickname: <input id="nickname" type="text" class="form">
+    Password: <input id="password" type="text" class="form">
+    <button id="signup" type="button" class="btn btn-outline-primary">アカウントを作る</button>
     <script>
         $("#signup").on('click', function() {
-            const nickname = prompt("ニックネームを入れてください")
-            fetch("https://2200c25abf67.ngrok.io/api/users", {
+            const id = $("#id").val()
+            const nickname = $("#nickname").val()
+            const password = $("#password").val()
+
+            fetch("https://9c5d64250fdd.ngrok.io/api/users", {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    nickname
+                    id,
+                    nickname,
+                    password,
                 })
             })
             .then(res => res.json())
             .then(data => {
-                $("#id").val(data.id)
+                console.log(data)
+            })
+        })
+    </script>
+
+    <h2>ログイン</h2>
+
+    ID: <input id="login_id" type="text" class="form">
+    Password: <input id="login_password" type="text" class="form">
+    <button id="login" type="button" class="btn btn-outline-primary">ログイン</button>
+    <script>
+        $("#login").on('click', function() {
+            const id = $("#login_id").val()
+            const password = $("#login_password").val()
+
+            fetch("https://9c5d64250fdd.ngrok.io/api/users/login", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id,
+                    password,
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
             })
         })
     </script>
 
     <h2>チャットルーム</h2>
-    <ul>
+    <ul id="chats">
         <li>Aさん: hogehoge</li>
         <li>自分: こんにちは</li>
     </ul>
@@ -54,5 +91,26 @@
         <input id="id" type="text" class="form">
         <button id="signup" type="button" class="btn btn-outline-primary">送信</button>
     </div>
+    <script>
+        setInterval(function() {
+            fetch("https://9c5d64250fdd.ngrok.io/api/messages/tnoborio", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                $("ul#chats").html("")
+                data.forEach(element => {
+                    $("ul#chats").append(`<li>${element}</li>`)    
+                });
+
+                console.log(data)
+            })
+        }, 1000)
+    </script>
+
 </body>
 </html>
