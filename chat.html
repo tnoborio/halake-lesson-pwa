@@ -27,8 +27,9 @@
 
     ID: <input id="id" type="text" class="form">
     Nickname: <input id="nickname" type="text" class="form">
-    Password: <input id="password" type="text" class="form">
+    Password: <input id="password" type="password" class="form">
     <button id="signup" type="button" class="btn btn-outline-primary">アカウントを作る</button>
+
     <script>
         $("#signup").on('click', function() {
             const id = $("#id").val()
@@ -57,7 +58,7 @@
     <h2>ログイン</h2>
 
     ID: <input id="login_id" type="text" class="form">
-    Password: <input id="login_password" type="text" class="form">
+    Password: <input id="login_password" type="password" class="form">
     <button id="login" type="button" class="btn btn-outline-primary">ログイン</button>
     <script>
         $("#login").on('click', function() {
@@ -77,7 +78,11 @@
             })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
+                if (data.success) {
+                    alert("ログインに成功しました")
+                } else {
+                    alert("ログインに失敗しました")
+                }
             })
         })
     </script>
@@ -88,9 +93,10 @@
         <li>自分: こんにちは</li>
     </ul>
     <div>
-        <input id="id" type="text" class="form">
-        <button id="signup" type="button" class="btn btn-outline-primary">送信</button>
+        <input id="message" type="text" class="form">
+        <button id="send" type="button" class="btn btn-outline-primary">送信</button>
     </div>
+
     <script>
         setInterval(function() {
             fetch("https://9c5d64250fdd.ngrok.io/api/messages/tnoborio", {
@@ -102,14 +108,35 @@
             })
             .then(res => res.json())
             .then(data => {
-                $("ul#chats").html("")
-                data.forEach(element => {
-                    $("ul#chats").append(`<li>${element}</li>`)    
-                });
+                $("#chats").html("")
+                data.forEach(message => {
+                    $("#chats").append(`<li>${message.body}</li>`)    
+                })
+            })
+        }, 5000)
 
+        $("#send").on('click', function() {
+            const message = $("#message").val()
+            const password = $("#login_id").val()
+
+            fetch("https://9c5d64250fdd.ngrok.io/api/users/login", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id,
+                    password,
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
                 console.log(data)
             })
-        }, 1000)
+        })
+
+
     </script>
 
 </body>
