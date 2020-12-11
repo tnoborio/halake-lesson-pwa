@@ -15,7 +15,6 @@
       navigator.serviceWorker.register('./sw.js').then(function() { console.log('Service Worker Registered') })
     }
   </script>
-
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
@@ -23,29 +22,27 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script>
-        // 1. urlを定義する
-        // 2. ログインかアカウント作成
-        const url = "https://ed1433e9de12.ngrok.io"
-        let mode = 'auth'
+        const url = "https://90c878c0f2a9.ngrok.io"
+        let userid = ""
         $(() => {
+            console.log("start")
             $("#chatroom").hide()
         })
     </script>
 
-    <div id="auth">
-        <h2>アカウントを作る</h2>
+<div class="container">
 
+    <div id="create_account">
+        <h2>アカウントを作る</h2>
         ID: <input id="id" type="text" class="form">
         Nickname: <input id="nickname" type="text" class="form">
         Password: <input id="password" type="password" class="form">
         <button id="signup" type="button" class="btn btn-outline-primary">アカウントを作る</button>
-    
         <script>
             $("#signup").on('click', function() {
                 const id = $("#id").val()
                 const nickname = $("#nickname").val()
                 const password = $("#password").val()
-    
                 fetch(url + "/api/users", {
                     method: 'POST',
                     headers: {
@@ -64,9 +61,10 @@
                 })
             })
         </script>
-    
+    </div>
+
+    <div id="login_area">
         <h2>ログイン</h2>
-    
         ID: <input id="login_id" type="text" class="form">
         Password: <input id="login_password" type="password" class="form">
         <button id="login" type="button" class="btn btn-outline-primary">ログイン</button>
@@ -74,7 +72,6 @@
             $("#login").on('click', function() {
                 const id = $("#login_id").val()
                 const password = $("#login_password").val()
-    
                 fetch(url + "/api/users/login", {
                     method: 'POST',
                     headers: {
@@ -89,9 +86,10 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert("ログインに成功しました")
-                        $("#auth").hide()
+                        userid = id
                         $("#chatroom").show()
+                        $("#create_account").hide()
+                        $("#login_area").hide()
                     } else {
                         alert("ログインに失敗しました")
                     }
@@ -100,20 +98,26 @@
         </script>
     </div>
 
+
     <div id="chatroom">
-        <h2>チャットルーム</h2>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+              <a class="navbar-brand" href="#">チャットルーム</a>
+            </div>
+          </nav>
+
         <ul id="chats">
             <li>Aさん: hogehoge</li>
             <li>自分: こんにちは</li>
         </ul>
         <div>
-            <input id="message" type="text" class="form">
+            To: <input id="to" type="text" class="form"><br>
+            <input id="body" type="text" class="form">
             <button id="send" type="button" class="btn btn-outline-primary">送信</button>
         </div>
-    
         <script>
             setInterval(function() {
-                fetch(url + "/api/messages/tnoborio", {
+                fetch(url + "/api/messages/" + userid, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -124,24 +128,38 @@
                 .then(data => {
                     $("#chats").html("")
                     data.forEach(message => {
-                        $("#chats").append(`<li>${message.body}</li>`)    
+                        if (message.from == userid) {
+                            $("#chats").append(`<div class="card bg-light mb-3 text-right">
+  <div class="card-header">${message.from}</div>
+  <div class="card-body">
+    <p class="card-text">${message.body}</p>
+  </div>
+</div>`)
+                        } else {
+                            $("#chats").append(`<div class="card text-white bg-primary mb-3">
+  <div class="card-header">taro</div>
+  <div class="card-body">
+    <p class="card-text">${message.body}</p>
+  </div>
+</div>`)
+
+                        }
                     })
                 })
-            }, 5000)
-    
+            }, 3000)
             $("#send").on('click', function() {
-                const message = $("#message").val()
-                const password = $("#login_id").val()
-    
-                fetch(url + "/api/users/login", {
+                const to = $("#to").val()
+                const body = $("#body").val()
+                fetch(url + "/api/messages", {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        id,
-                        password,
+                        to,
+                        from: userid,
+                        body,
                     })
                 })
                 .then(res => res.json())
@@ -149,10 +167,10 @@
                     console.log(data)
                 })
             })
-    
-    
         </script>
     </div>
+
+</div>
 
 </body>
 </html>
