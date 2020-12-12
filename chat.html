@@ -30,8 +30,6 @@
         })
     </script>
 
-<div class="container">
-
     <div id="create_account">
         <h2>アカウントを作る</h2>
         ID: <input id="id" type="text" class="form">
@@ -100,15 +98,11 @@
 
 
     <div id="chatroom">
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-              <a class="navbar-brand" href="#">チャットルーム</a>
-            </div>
-          </nav>
-
+        <h2>チャットルーム</h2>
         <ul id="chats">
-            <li>Aさん: hogehoge</li>
-            <li>自分: こんにちは</li>
+            <li></li>
+            <li>hogehoge</li>
+            <li>hogehoge</li>
         </ul>
         <div>
             To: <input id="to" type="text" class="form"><br>
@@ -128,21 +122,14 @@
                 .then(data => {
                     $("#chats").html("")
                     data.forEach(message => {
-                        if (message.from == userid) {
-                            $("#chats").append(`<div class="card bg-light mb-3 text-right">
-  <div class="card-header">${message.from}</div>
-  <div class="card-body">
-    <p class="card-text">${message.body}</p>
-  </div>
-</div>`)
+                        if (userid == message.from) {
+                            $("#chats").append(`<div class="alert alert-info text-right" role="alert">
+                                ${message.from}; ${message.body}
+                            </div>`)
                         } else {
-                            $("#chats").append(`<div class="card text-white bg-primary mb-3">
-  <div class="card-header">taro</div>
-  <div class="card-body">
-    <p class="card-text">${message.body}</p>
-  </div>
-</div>`)
-
+                            $("#chats").append(`<div class="alert alert-dark" role="alert">
+                                ${message.from}; ${message.body}
+                            </div>`)
                         }
                     })
                 })
@@ -150,6 +137,9 @@
             $("#send").on('click', function() {
                 const to = $("#to").val()
                 const body = $("#body").val()
+
+                $("#body").val("")
+
                 fetch(url + "/api/messages", {
                     method: 'POST',
                     headers: {
@@ -169,8 +159,5 @@
             })
         </script>
     </div>
-
-</div>
-
 </body>
 </html>
